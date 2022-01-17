@@ -3,10 +3,12 @@ package com.stevencl.resthr.model;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "team_members")
+@SequenceGenerator(name = "sequence_gen", sequenceName = "team_member_seq", initialValue = 10)
 public class TeamMember extends Employee {
 
     @ManyToOne
