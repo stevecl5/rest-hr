@@ -8,6 +8,4 @@ import org.springframework.stereotype.Repository;
  * Provides methods for interacting with the manager repository.
  */
 @Repository
-public interface ManagerRepository extends CrudRepository<Manager, Long> {
-    Manager findManagerById(long id);
-}
+public interface ManagerRepository extends CrudRepository<Manager, Long> {}

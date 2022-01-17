@@ -50,7 +50,8 @@ public class TeamMemberController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TeamMember getTeamMember(@PathVariable long id) {
-        return teamMemberRepository.findTeamMemberById(id);
+        return teamMemberRepository.findById(id)
+                .orElseThrow(RuntimeException::new);
     }
 
     /**

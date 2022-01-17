@@ -50,7 +50,8 @@ public class ManagerController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Manager getManager(@PathVariable long id) {
-        return managerRepository.findManagerById(id);
+        return managerRepository.findById(id)
+                .orElseThrow(RuntimeException::new);
     }
 
     /**
