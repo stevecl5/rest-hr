@@ -5,6 +5,7 @@ import com.stevencl.resthr.repository.ManagerRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("api/managers")
 public class ManagerController {
 
-    /** The manager repository for the application. */
     private final ManagerRepository managerRepository;
 
     /**
@@ -63,9 +63,11 @@ public class ManagerController {
      * @param newManager  new manager to be added to the repository
      * @return            the successfully added manager
      */
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Manager createManager(@RequestBody Manager newManager) {
-        return managerRepository.save(newManager);
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Manager> createManager(@RequestBody Manager newManager) {
+        return new ResponseEntity<>(managerRepository.save(newManager),
+                HttpStatus.CREATED);
     }
 
     /**
@@ -95,6 +97,10 @@ public class ManagerController {
      */
     @DeleteMapping("/{id}")
     public void deleteManager(@PathVariable long id) {
+        managerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Manager not found"));
+
         managerRepository.deleteById(id);
     }
 

@@ -1,6 +1,7 @@
 package com.stevencl.resthr.controller;
 
 import com.stevencl.resthr.model.TeamMember;
+import com.stevencl.resthr.repository.ManagerRepository;
 import com.stevencl.resthr.repository.TeamMemberRepository;
 
 import org.springframework.http.HttpStatus;
@@ -22,16 +23,18 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("api/team-members")
 public class TeamMemberController {
 
-    /** The team member repository for the application. */
     private final TeamMemberRepository teamMemberRepository;
+    private final ManagerRepository managerRepository;
 
     /**
      * Sole constructor.
      *
      * @param teamMemberRepository  the team member repository dependency
      */
-    public TeamMemberController(TeamMemberRepository teamMemberRepository) {
+    public TeamMemberController(TeamMemberRepository teamMemberRepository,
+            ManagerRepository managerRepository) {
         this.teamMemberRepository = teamMemberRepository;
+        this.managerRepository = managerRepository;
     }
 
     /**
@@ -78,12 +81,16 @@ public class TeamMemberController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public TeamMember replaceTeamMember(@RequestBody TeamMember newTeamMember,
             @PathVariable long id) {
+        var manager = managerRepository.findById(
+                newTeamMember.getManager().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Manager does not exist"));
         return teamMemberRepository.findById(id)
                 .map(teamMember -> {
                     teamMember.setFirstName(newTeamMember.getFirstName());
                     teamMember.setLastName(newTeamMember.getLastName());
                     teamMember.setEmail(newTeamMember.getEmail());
-                    teamMember.setManager(newTeamMember.getManager());
+                    teamMember.setManager(manager);
                     return teamMemberRepository.save(teamMember);
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -97,6 +104,10 @@ public class TeamMemberController {
      */
     @DeleteMapping("/{id}")
     public void deleteTeamMember(@PathVariable long id) {
+        teamMemberRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Team member not found"));
+
         teamMemberRepository.deleteById(id);
     }
 
