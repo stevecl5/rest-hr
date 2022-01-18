@@ -1,5 +1,6 @@
 package com.stevencl.resthr.model;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,8 +15,11 @@ public abstract class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_gen")
     private long id;
+    @Column(nullable = false)
     private String firstName;
+    @Column(nullable = false)
     private String lastName;
+    @Column(nullable = false)
     private String email;
 
     /**
