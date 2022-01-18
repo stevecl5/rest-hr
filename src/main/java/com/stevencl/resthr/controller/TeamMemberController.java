@@ -3,6 +3,7 @@ package com.stevencl.resthr.controller;
 import com.stevencl.resthr.model.TeamMember;
 import com.stevencl.resthr.repository.TeamMemberRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Provides a REST controller for CRUD operations on team members.
@@ -51,7 +53,8 @@ public class TeamMemberController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TeamMember getTeamMember(@PathVariable long id) {
         return teamMemberRepository.findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Team member not found"));
     }
 
     /**
@@ -83,7 +86,8 @@ public class TeamMemberController {
                     teamMember.setManager(newTeamMember.getManager());
                     return teamMemberRepository.save(teamMember);
                 })
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Team member not found"));
     }
 
     /**

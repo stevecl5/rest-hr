@@ -3,6 +3,7 @@ package com.stevencl.resthr.controller;
 import com.stevencl.resthr.model.Manager;
 import com.stevencl.resthr.repository.ManagerRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Provides a REST controller for CRUD operations on managers.
@@ -51,7 +53,8 @@ public class ManagerController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Manager getManager(@PathVariable long id) {
         return managerRepository.findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Manager not found"));
     }
 
     /**
@@ -81,7 +84,8 @@ public class ManagerController {
                     manager.setEmail(newManager.getEmail());
                     return managerRepository.save(manager);
                 })
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Manager not found"));
     }
 
     /**
